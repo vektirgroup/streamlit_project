@@ -91,4 +91,6 @@ if __name__ =='__main__':
         -   Prediction (30 Days): """ + str(y_pred) + """
     """)
 
+    # create new chart with predictions, add train test split
+
 
