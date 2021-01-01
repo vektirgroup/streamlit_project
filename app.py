@@ -87,7 +87,7 @@ if __name__ =='__main__':
 
     st.markdown("""
         #### Model Information
-        - Test #1 - 30 Days - Statsmodels ARIMA
+        - Test #1 - StatsModels ARIMA
         -   Prediction (30 Days): """ + str(y_pred) + """
     """)
 
