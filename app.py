@@ -1,31 +1,61 @@
 import streamlit as st
 import pandas as pd
-import pandas as np
+import numpy as np
+from statsmodels.tsa.arima.model import ARIMA
+from datetime import datetime
 import plotly.express as px
 import plotly as plotly
 import plotly.graph_objs as go
 
 PROD_CURVE_DATA = 'data/Gas_prod_data.csv'
 
+def create_tsa_predictions(df):
+    # ARIMA model
+    model = ARIMA(df, order=(5,1,0))
+    model_fit = model.fit()
+    output = model_fit.forecast()
+
+    return output
+
 def get_data():
-    return pd.read_csv(PROD_CURVE_DATA)
+    return pd.read_csv(PROD_CURVE_DATA, header=0, parse_dates=True, squeeze=True)
 
 def create_scatter(df):
+
     # create plot
     fig = go.Figure(
         data=go.Scatter(
-            x=df['Days'],
-            y=df['Rate'],
+            x=df['days'],
+            y=df['rate'],
             mode='markers'
         )
     )
-    # Updtae plot layout
-    fig.update_layout(
-        title="Original Data - ",
-        xaxis_title="Days",
-        yaxis_title="Rate"
 
-)
+    # Update plot layout
+    fig.update_layout(
+        xaxis_title="Days",
+        yaxis_title="Rate (mcf)"
+
+    )
+    return fig
+
+def create_arima_scatter(df):
+
+    # create plot
+    fig = go.Figure(
+        data=go.Scatter(
+            x=df.index,
+            y=df['rate'],
+            mode='markers'
+        )
+    )
+
+    # Update plot layout
+    fig.update_layout(
+        xaxis_title="Days",
+        yaxis_title="Rate (mcf)"
+
+    )
     return fig
 
 def get_sidebar():
@@ -39,13 +69,26 @@ def get_sidebar():
 
 if __name__ =='__main__':
     df = get_data()
-    fig = create_scatter(df)
+    o_fig = create_scatter(df)
     sb = get_sidebar()
-    st.markdown("# Production - Curve Decline Analysis")
+
     st.markdown("""
-        ###### Motivation: Build a Machine Learning Algorithm that can accurately predict estimated production rate 30 day out!
+        # Production - Curve Decline Analysis
+        ---
     """)
 
-    st.plotly_chart(fig)
+    #Arima df
+    n_df = df[['date', 'rate']]
+    n_df.set_index('date', inplace = True)
+    y_pred = create_tsa_predictions(n_df)
+
+    # Chart Visuals
+    st.plotly_chart(o_fig)
+
+    st.markdown("""
+        #### Model Information
+        - Test #1 - 30 Days - Statsmodels ARIMA
+        -   Prediction (30 Days): """ + str(y_pred) + """
+    """)
 
 
