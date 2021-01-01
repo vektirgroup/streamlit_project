@@ -21,21 +21,30 @@ def create_scatter(df):
     )
     # Updtae plot layout
     fig.update_layout(
-        title="Original Data",
+        title="Original Data - ",
         xaxis_title="Days",
         yaxis_title="Rate"
 
 )
     return fig
 
-def st_sidebar():
-    return st.sidebar.Markdown('## The Vektir Group, LLC ')
+def get_sidebar():
+    return st.sidebar.markdown("""
+        # The Vektir Group, LLC \n
+        - Dev: Tyler Hunt
+        - Email: vektirgroup@gmail.com
+        - Date: 01/01/2021
+        - GitHub: https://bit.ly/3o5cMxa
+        """)
 
 if __name__ =='__main__':
     df = get_data()
     fig = create_scatter(df)
-    st.markdown("## Production - Curve Decline Analysis")
-    st.markdown("#### Original Data")
+    sb = get_sidebar()
+    st.markdown("# Production - Curve Decline Analysis")
+    st.markdown("""
+        ###### Motivation: Build a Machine Learning Algorithm that can accurately predict estimated production rate 30 day out!
+    """)
 
     st.plotly_chart(fig)
 
